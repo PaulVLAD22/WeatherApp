@@ -90,13 +90,15 @@ def saveSearch(city,data):
 
         if (alreadyInList==0):
             #DELETE
-            c.execute("DELETE FROM cities WHERE name="+city)
+            c.execute("DELETE FROM cities WHERE name="+cities_list[0][0])
             #INSERT
             c.execute("INSERT INTO cities VALUES(:name,:temp)",
                     {
                         'name':city,
                         'temp':round(theJSON["main"]["temp"]-273.15,1)
                     })
+    conn.commit()
+    conn.close()
 
 
 # Getting Information from api
@@ -120,7 +122,7 @@ def getInfoName(city):
 def main():
     root = Tk()
     root.title("Live Weather")
-    root.geometry("400x300")
+    root.geometry("400x400")
     root.configure(background='white')
 
     # Widgets
@@ -146,18 +148,20 @@ def main():
         print(cities_list)
 
         if (len(cities_list)>=1):
-            recordLabel1=Button(root,text=cities_list[0][0]+" - "+cities_list[0][1]+"C", font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[0][0]),background='white')
+            recordLabel1=Button(root,text=cities_list[0][0].capitalize()+" - "+str(cities_list[0][1])+"C", font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[0][0]),background='white')
             recordLabel1.pack(pady=10)
         if (len(cities_list)>=2):
-            recordLabel2=Button(root,text=cities_list[1][0]+" - "+cities_list[1][1]+"C",font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[1][0]),background='white')
+            recordLabel2=Button(root,text=cities_list[1][0].capitalize()+" - "+str(cities_list[1][1])+"C",font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[1][0]),background='white')
             recordLabel2.pack(pady=10)
         if (len(cities_list)==3):
-            recordLabel3=Button(root,text=cities_list[2][0]+" - "+cities_list[2][1]+"C",font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[2][0]),background='white')
+            recordLabel3=Button(root,text=cities_list[2][0].capitalize()+" - "+str(cities_list[2][1])+"C",font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[2][0]),background='white')
             recordLabel3.pack(pady=10)
 
         print("Already Created")
 
 
+    conn.commit()
+    conn.close()
 
     showWeatherButton = Button(root, text="Show Weather", font=('Arial', 12, 'bold'), padx=10, pady=5, command=lambda: getInfoName(cityEntry.get()), background='white')
     showWeatherButton.pack(pady=20)
@@ -168,3 +172,6 @@ def main():
 
 if __name__=="__main__":
     main()
+
+
+# AI DE FACUT SCHIMBAREA LA 3 ORASE SA IASA PRIMUL ORAS SI TOT ASA 
