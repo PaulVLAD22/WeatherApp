@@ -2,7 +2,7 @@ import urllib.request
 import json
 from tkinter import *
 from numpy import round
-
+import config
 
 # Displaying error
 def receivedError(city):
@@ -64,7 +64,7 @@ def displayMoreInformation(data, temp):
 
 # Getting Information from api
 def getInfoName(city):
-    myapikey = "7795a887929bc1b5db11fe7b05765513"
+    myapikey = config.myapikey
     try:
         urlData = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myapikey
         webUrl = urllib.request.urlopen(urlData)
