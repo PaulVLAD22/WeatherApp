@@ -6,4 +6,4 @@ Weather desktop app that displays live statistics using openweathermap.org's cur
 <li>Json
 <li>SQLLITE3<br>
 <strong>(Still working on the database aspect of the project)</strong>
-<img src="https://i.imgur.com/TplFVUb.png">
+<img src="https://i.imgur.com/Xg76dz6.png">
