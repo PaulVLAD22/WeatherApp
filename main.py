@@ -75,12 +75,18 @@ def saveSearch(city,data):
     cities_list=c.fetchall()
 
     if(len(cities_list)<=2):
-        #Just Insert City
-        c.execute("INSERT INTO cities VALUES(:name,:temp)",
-                    {
-                        'name':city,
-                        'temp':round(theJSON["main"]["temp"]-273.15,1)
-                    })
+        #Check if already in list
+        alreadyInList=0
+        for record in cities_list:
+            if (record[0]==city):
+                alreadyInList=1
+        #INSERT
+        if(alreadyInList==0):
+            c.execute("INSERT INTO cities VALUES(:name,:temp)",
+                        {
+                            'name':city,
+                            'temp':round(theJSON["main"]["temp"]-273.15,1)
+                        })
     else:
         #Check if city already in list
         alreadyInList=0
