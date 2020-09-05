@@ -53,6 +53,7 @@ def displayMoreInformation(data, temp):
     detailsWindow.title("Details")
     detailsWindow.geometry("400x300")
     detailsWindow.configure(background='white')
+    #Widgets
     Label(detailsWindow, text=theJSON["weather"][0]["main"], font=('Arial', 14, 'bold'),  background='white').pack(pady=10)
     Label(detailsWindow, text=theJSON["weather"][0]["description"], font=('Arial', 14, 'bold'),  background='white').pack(pady=10)
 
@@ -74,11 +75,12 @@ def saveSearch(city,data):
     c.execute("SELECT * FROM cities")
     cities_list=c.fetchall()
 
+
     if(len(cities_list)<=2):
         #Check if already in list
         alreadyInList=0
         for record in cities_list:
-            if (record[0]==city):
+            if (record[0].upper()==city.upper()):
                 alreadyInList=1
         #INSERT
         if(alreadyInList==0):
@@ -91,12 +93,13 @@ def saveSearch(city,data):
         #Check if city already in list
         alreadyInList=0
         for record in cities_list:
-            if (record[0]==city):
+            if (record[0].upper()==city.upper()):
                 alreadyInList=1
 
         if (alreadyInList==0):
             #DELETE
-            c.execute("DELETE FROM cities WHERE name="+cities_list[0][0])
+            c.execute("DELETE from cities WHERE oid in (select oid from cities limit 1)")
+            print("s-a sters ceva")
             #INSERT
             c.execute("INSERT INTO cities VALUES(:name,:temp)",
                     {
@@ -107,22 +110,32 @@ def saveSearch(city,data):
     conn.close()
 
 
-# Getting Information from api
-def getInfoName(city):
+# Getting Information from api and displaying the weather (opening 2nd window)
+def getInfoNameAndDisplay(city):
     myapikey = config.myapikey
     try:
         urlData = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myapikey
         webUrl = urllib.request.urlopen(urlData)
         if (webUrl.getcode() == 200):
-            print("AA")
-            data = webUrl.read()
-            displayCelsius(data)
+            data = webUrl.read() #Reading JSON data
+            displayCelsius(data) #Tkinter App
         else:
             receivedError(city)
     except:
         receivedError(city)
     saveSearch(city,data)
 
+#Gives Info about City from api
+def getInfoName(city):
+    myapikey = config.myapikey
+    try:
+        urlData = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + myapikey
+        webUrl = urllib.request.urlopen(urlData)
+        if (webUrl.getcode() == 200):
+            return webUrl.read()
+    except:
+        print("Connection failed")
+    
 
 # Tinker app
 def main():
@@ -149,18 +162,26 @@ def main():
                     temp real
                 )""")
     except:
+        #Db Already Created
         c.execute("SELECT * FROM cities")
         cities_list=c.fetchall()
         print(cities_list)
 
+        # Read Current Weather In the saved cities
+        for i in range (len(cities_list)):
+            cities_list[i]=list(cities_list[i])
+            cities_list[i][1]=round(json.loads(getInfoName(cities_list[i][0]))["main"]["temp"]-273.15,1)
+        print(cities_list)
+
+
         if (len(cities_list)>=1):
-            recordLabel1=Button(root,text=cities_list[0][0].capitalize()+" - "+str(cities_list[0][1])+"C", font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[0][0]),background='white')
+            recordLabel1=Button(root,text=cities_list[0][0].capitalize()+" - "+str(cities_list[0][1])+"C", font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoNameAndDisplay(cities_list[0][0]),background='white')
             recordLabel1.pack(pady=10)
         if (len(cities_list)>=2):
-            recordLabel2=Button(root,text=cities_list[1][0].capitalize()+" - "+str(cities_list[1][1])+"C",font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[1][0]),background='white')
+            recordLabel2=Button(root,text=cities_list[1][0].capitalize()+" - "+str(cities_list[1][1])+"C",font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoNameAndDisplay(cities_list[1][0]),background='white')
             recordLabel2.pack(pady=10)
-        if (len(cities_list)==3):
-            recordLabel3=Button(root,text=cities_list[2][0].capitalize()+" - "+str(cities_list[2][1])+"C",font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoName(cities_list[2][0]),background='white')
+        if (len(cities_list)>=3):
+            recordLabel3=Button(root,text=cities_list[2][0].capitalize()+" - "+str(cities_list[2][1])+"C",font=('Arial', 12, 'bold'), padx=10, pady=5,command=lambda:getInfoNameAndDisplay(cities_list[2][0]),background='white')
             recordLabel3.pack(pady=10)
 
         print("Already Created")
@@ -169,7 +190,7 @@ def main():
     conn.commit()
     conn.close()
 
-    showWeatherButton = Button(root, text="Show Weather", font=('Arial', 12, 'bold'), padx=10, pady=5, command=lambda: getInfoName(cityEntry.get()), background='white')
+    showWeatherButton = Button(root, text="Show Weather", font=('Arial', 12, 'bold'), padx=10, pady=5, command=lambda: getInfoNameAndDisplay(cityEntry.get()), background='white')
     showWeatherButton.pack(pady=20)
 
     # App Loop
@@ -178,6 +199,3 @@ def main():
 
 if __name__=="__main__":
     main()
-
-
-# AI DE FACUT SCHIMBAREA LA 3 ORASE SA IASA PRIMUL ORAS SI TOT ASA 
