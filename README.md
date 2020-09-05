@@ -5,4 +5,4 @@ Weather desktop app that displays live statistics using openweathermap.org's cur
 <li>Tkinter
 <li>Json
 <li>SQLLITE3<br>
-<img src="https://i.imgur.com/Xg76dz6.png">
+<img src="https://i.imgur.com/aYEhT9l.png">
