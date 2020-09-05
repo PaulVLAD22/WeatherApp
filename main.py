@@ -50,7 +50,7 @@ def displayCelsius(data):
 def displayMoreInformation(data, temp):
     theJSON = json.loads(data)
     detailsWindow = Toplevel()
-    detailsWindow.title("Details")
+    detailsWindow.title("Details "+theJSON["name"]+" "+temp)
     detailsWindow.geometry("400x300")
     detailsWindow.configure(background='white')
     #Widgets
