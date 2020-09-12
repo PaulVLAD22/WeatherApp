@@ -5,5 +5,5 @@ Weather desktop app that displays live statistics using openweathermap.org's cur
 <li>Tkinter
 <li>Json
 <li>SQLLITE3<br>
-<img src="https://i.imgur.com/aYEhT9l.png">
+<img src="https://i.imgur.com/mwJW8s6.png">
 (The "Problems 100" refers to the fact i didn't use all Tkinter functions available)
